@@ -12,7 +12,7 @@ import { store } from './redux/Store';
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    {/* 2. بنلف الـ App والـ BrowserRouter بالـ Provider */}
+
     <Provider store={store}>
       <BrowserRouter future={{v7_startTransition: true, v7_relativeSplatPath: true }}>
         <App />

@@ -6,8 +6,8 @@ import { Routes, Route } from 'react-router-dom';
 import './styles/global.css'; 
 
 // استدعاء المكونات
-import Navbar from './components/Navbar';
-import Footer from './components/Footer';
+import Navbar from './Components/Navbar';
+import Footer from './Components/Footer';
 
 // استدعاء الصفحات (تأكدي من مطابقة الحروف الكبيرة/الصغيرة للمجلدات)
 import Home from './Pages/Home';

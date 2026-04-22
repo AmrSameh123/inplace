@@ -6,7 +6,6 @@ import reportWebVitals from './reportWebVitals';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter } from 'react-router-dom';
 
-// 1. الأسطر الجديدة اللي بنضيفها عشان الريدكس يشتغل
 import { Provider } from 'react-redux';
 import { store } from './redux/Store'; 
 

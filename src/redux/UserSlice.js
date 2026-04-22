@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   user: {
-    name: "Alaa Khaled", // تقدري تغيريه بعدين
+    name: "Alaa Khaled",
     role: "volunteer", 
     hours: 48,
   },
@@ -13,7 +13,6 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    // دالة لتحديث البيانات لو حبيتي
     updateUser: (state, action) => {
       state.user = { ...state.user, ...action.payload };
     },

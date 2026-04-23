@@ -70,10 +70,7 @@ export default function Home() {
                 </span>
                 Join the movement
               </Link>
-              <span className="hero-cta-meta">
-                <span className="hero-cta-meta-label">Live matching</span>
-                <span className="hero-cta-meta-date">Open today</span>
-              </span>
+    
             </div>
 
 

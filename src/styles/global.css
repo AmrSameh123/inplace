@@ -78,6 +78,48 @@ h1, h2, h3, h4, h5, h6 {
   padding: 0 24px;
 }
 
+
+/* remove the underline */
+a, .btn {
+  text-decoration: none !important;
+  color: inherit;
+}
+
+button {
+  border: none;
+  background: none;
+  cursor: pointer;
+}
+
+
+
+
+
+/* Make sure the button in lavander */
+.btn-primary, button[type="button"] {
+    background-color: #8b7ad6 !important; 
+    color: white !important;
+    border-radius: 999px !important;
+    padding: 12px 22px !important;
+    display: inline-flex !important;
+    border: none !important;
+    box-shadow: 0 8px 20px rgba(139, 122, 214, 0.35) !important;
+}
+
+
+
+.btn, .hero-primary-btn {
+  position: relative !important;
+  z-index: 99 !important;
+  pointer-events: auto !important;
+  cursor: pointer !important;
+  text-decoration: none !important;
+}
+
+
+
+
+
 .btn {
   display: inline-flex;
   align-items: center;
@@ -89,16 +131,22 @@ h1, h2, h3, h4, h5, h6 {
   font-size: 15px;
   transition: all var(--transition);
   white-space: nowrap;
+
+
 }
 .btn-primary {
   background: var(--color-lavender);
   color: #fff;
   box-shadow: 0 8px 20px rgba(139, 122, 214, 0.35);
 }
+
+
+
+
 .btn-primary:hover {
-  background: var(--color-lavender-dark);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 28px rgba(139, 122, 214, 0.45);
+  background: var(--color-lavender-dark) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 28px rgba(139, 122, 214, 0.45) !important;
 }
 .btn-ghost {
   background: transparent;
@@ -106,16 +154,16 @@ h1, h2, h3, h4, h5, h6 {
   border: 1.5px solid var(--color-border-strong);
 }
 .btn-ghost:hover {
-  background: var(--color-lavender-softer);
-  border-color: var(--color-lavender);
+  background: var(--color-lavender-softer) !important;
+  border-color: var(--color-lavender) !important;
 }
 .btn-soft {
   background: var(--color-lavender-softer);
   color: var(--color-lavender-dark);
 }
 .btn-soft:hover {
-  background: var(--color-lavender-light);
-  color: #fff;
+  background: var(--color-lavender-light) !important;
+  color: #fff !important;
 }
 
 .card {

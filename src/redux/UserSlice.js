@@ -1,11 +1,8 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  user: {
-    name: "Alaa Khaled",
-    role: "volunteer", 
-    hours: 48,
-  },
+  user: null,
+    selectedRole: null, // 'volunteer' or 'organization'
   formData: {}
 };
 
@@ -18,9 +15,12 @@ const userSlice = createSlice({
     },
     setFormData: (state, action) => {
       state.formData = action.payload;
+    },
+    setSelectedRole: (state, action) => {
+      state.selectedRole = action.payload;
     }
   }
 });
 
-export const { updateUser, setFormData } = userSlice.actions;
+export const { updateUser, setFormData, setSelectedRole } = userSlice.actions;
 export default userSlice.reducer;

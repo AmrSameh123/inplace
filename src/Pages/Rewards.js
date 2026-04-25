@@ -9,7 +9,7 @@ const TIERS = [
 
 export default function Rewards() {
   const user = useSelector((state) => state.user.user);
-  const hours = user.hours ?? 0
+  const hours = user?.hours ?? 0
 
   const currentTier =
     hours >= 150 ? TIERS[2] : hours >= 50 ? TIERS[1] : hours >= 10 ? TIERS[0] : null

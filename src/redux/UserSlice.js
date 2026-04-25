@@ -2,8 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
   user: null,
-    selectedRole: null, // 'volunteer' or 'organization'
-  formData: {}
+  selectedRole: null, // 'volunteer' or 'organization'
 };
 
 const userSlice = createSlice({
@@ -11,10 +10,8 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     updateUser: (state, action) => {
-      state.user = { ...state.user, ...action.payload };
-    },
-    setFormData: (state, action) => {
-      state.formData = action.payload;
+      // If payload is null → clear user (logout). Otherwise merge.
+      state.user = action.payload === null ? null : { ...state.user, ...action.payload };
     },
     setSelectedRole: (state, action) => {
       state.selectedRole = action.payload;
@@ -22,5 +19,5 @@ const userSlice = createSlice({
   }
 });
 
-export const { updateUser, setFormData, setSelectedRole } = userSlice.actions;
+export const { updateUser, setSelectedRole } = userSlice.actions;
 export default userSlice.reducer;

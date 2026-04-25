@@ -96,7 +96,7 @@ button {
 
 
 /* Make sure the button in lavander */
-.btn-primary, button[type="button"] {
+.btn-primary, button[type="button"]:not(.navbar-toggler) {
     background-color: #8b7ad6 !important; 
     color: white !important;
     border-radius: 999px !important;

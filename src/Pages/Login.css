@@ -187,12 +187,29 @@
 }
 
 @media (max-width: 991px) {
+
   .login-container-split {
     max-width: 500px;
+    width: 95%; 
     min-height: auto;
+    margin: 0 auto; 
+    flex-direction: column;
   }
+  .login-form-side {
+    width: 100%;
+    flex: none; 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   .login-inner {
     padding: 40px 24px;
+    width: 100%;
+  }
+
+  .login-decoration-side {
+    display: none !important;
   }
 }
 

@@ -438,15 +438,27 @@ section {
 }
 
 
-.question-card {
-  background: #fff;
-  border: 1px solid var(--lav-100);
-  border-radius: 16px;
-  padding: 18px 20px;
-  margin-bottom: 14px;
-  transition: all .2s;
+/* عدلنا الاسم عشان يشمل الكلاس بتاعك كمان وضفنا اللافندر */
+.question-card, .question-box {
+  background-color: #f6f4fe !important; /* لافندر فاتح */
+  border: 1px solid #eeebfa !important;
+  border-radius: 20px !important;
+  padding: 25px !important;
+  margin-bottom: 20px !important;
+  transition: all .3s ease;
 }
-.question-card:hover { border-color: var(--lav-200); }
+
+/* ستايل الـ Hover */
+.question-card:hover, .question-box:hover {
+  border-color: var(--lav-200) !important;
+  transform: translateY(-2px);
+}
+
+/* وأهم حتة: ستايل الإجابة */
+.question-box.answered {
+  background-color: #ede7ff !important; /* لافندر أغمق */
+  border: 2px solid #8b7ad6 !important;
+}
 
 /* ---------- Opportunity cards ---------- */
 .opp-card {

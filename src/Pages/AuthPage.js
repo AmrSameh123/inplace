@@ -223,9 +223,7 @@ export default function AuthPage() {
                           <option value="">Select your track</option>
                           <option value="frontend">Frontend Developer</option>
                           <option value="backend">Backend Developer</option>
-                          <option value="fullstack">Full Stack Developer</option>
-                          <option value="design">UI/UX Designer</option>
-                          <option value="mobile">Mobile Developer</option>
+                          <option value="fullstack">Database</option>
                         </select>
                         {volunteerFormik.touched.specialty && volunteerFormik.errors.specialty && <div className="error-msg">{volunteerFormik.errors.specialty}</div>}
                       </div>
@@ -280,9 +278,8 @@ export default function AuthPage() {
                           <option value="">Select project field</option>
                           <option value="frontend">Frontend Development</option>
                           <option value="backend">Backend Development</option>
-                          <option value="fullstack">Full Stack Projects</option>
-                          <option value="design">UI/UX Design</option>
-                          <option value="mobile">Mobile Development</option>
+                          <option value="fullstack">Database</option>
+                          
                         </select>
                         {orgFormik.touched.industry && orgFormik.errors.industry && <div className="error-msg">{orgFormik.errors.industry}</div>}
                       </div>

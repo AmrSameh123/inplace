@@ -1,5 +1,5 @@
 import './Logo.css'
-import logo from '../assets/logo_1-removebg-preview.png'
+import logo from '../../assets/logo_1-removebg-preview.png'
 
 
 export default function Logo({ size = 32, showWordmark = true }) {

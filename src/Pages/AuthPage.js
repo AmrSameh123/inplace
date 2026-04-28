@@ -5,7 +5,7 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { motion, AnimatePresence } from 'framer-motion';
 import { updateUser, setSelectedRole as setReduxRole } from '../redux/UserSlice';
-import Logo from '../Components/Logo';
+import Logo from '../Components/Logo/Logo';
 
 // React Bits
 import ShinyText from '../Components/Bits/ShinyText';
@@ -80,7 +80,8 @@ export default function AuthPage() {
       setTimeout(() => {
         dispatch(updateUser({ name: values.name, role: 'volunteer', email: values.email }));
         setIsLoading(false);
-        navigate('/');
+        // navigate('/');
+        navigate('/volunteer/preference');
       }, 1500);
     },
   });

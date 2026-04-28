@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux';
 import { updateUser, setSelectedRole } from '../redux/UserSlice'
-import Logo from './Logo.js'
+import Logo from './Logo/Logo.js'
 import './Navbar.css'
 
 export default function Navbar() {

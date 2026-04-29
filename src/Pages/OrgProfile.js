@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { OPPORTUNITIES, ORG_REQUIREMENT_QUESTIONS } from "../data/Constants";
+import { OPPORTUNITIES, ORG_REQUIREMENT_QUESTIONS, ORG_CULTURE_QUESTIONS } from "../data/Constants";
 import { updateOrganization } from "../redux/OrgSlice";
 import { updateApplicationStatus } from "../redux/ApplicationsSlice";
 import QuestionList from "../Components/QuestionList";
@@ -164,6 +164,65 @@ const OrgProfile = () => {
                     </div>
                   </div>
                 </div>
+              </motion.div>
+
+              {/* Assessment Summary Section (NEW) */}
+              <motion.div variants={fadeUp} className="card border-0 shadow-sm rounded-4 p-4">
+                <div className="d-flex justify-content-between align-items-center mb-4">
+                  <h5 className="fw-bold text-dark mb-0">Setup Progress & Culture</h5>
+                  <span className="badge bg-primary rounded-pill px-3">Matching Readiness</span>
+                </div>
+                
+                <div className="row g-3">
+                  <div className="col-md-6">
+                    <div className="p-3 rounded-4 bg-light border">
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <span className="small fw-bold text-secondary">Work Culture</span>
+                        <span className="small fw-bold">
+                          {Object.keys(organization.environment || {}).length}/{ORG_CULTURE_QUESTIONS.length}
+                        </span>
+                      </div>
+                      <div className="progress mb-2" style={{ height: "6px" }}>
+                        <div 
+                          className="progress-bar bg-primary" 
+                          style={{ width: `${(Object.keys(organization.environment || {}).length / ORG_CULTURE_QUESTIONS.length) * 100}%` }}
+                        ></div>
+                      </div>
+                      <p className="small text-muted mb-0" style={{ fontSize: "0.75rem" }}>
+                        Helps match volunteer personalities.
+                      </p>
+                    </div>
+                  </div>
+                  
+                  <div className="col-md-6">
+                    <div className="p-3 rounded-4 bg-light border">
+                      <div className="d-flex justify-content-between align-items-center mb-2">
+                        <span className="small fw-bold text-secondary">Gen. Requirements</span>
+                        <span className="small fw-bold">
+                          {Object.keys(organization.requirements || {}).length}/3+
+                        </span>
+                      </div>
+                      <div className="progress mb-2" style={{ height: "6px" }}>
+                        <div 
+                          className="progress-bar bg-info" 
+                          style={{ width: `${Math.min(100, (Object.keys(organization.requirements || {}).length / 3) * 100)}%` }}
+                        ></div>
+                      </div>
+                      <p className="small text-muted mb-0" style={{ fontSize: "0.75rem" }}>
+                        Essential for technical matching.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                { (Object.keys(organization.environment || {}).length < ORG_CULTURE_QUESTIONS.length || 
+                   Object.keys(organization.requirements || {}).length < 3) && (
+                  <div className="mt-3">
+                    <Link to="/org/preference" state={{ editMode: true }} className="btn btn-sm btn-lav-outline w-100 rounded-pill">
+                      Complete Setup for Better Matching
+                    </Link>
+                  </div>
+                )}
               </motion.div>
 
               {/* Applicants Dashboard Section (NEW) */}

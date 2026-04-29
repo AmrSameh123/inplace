@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { computeBadges } from "../utils/badges";
 import { updateVolunteer, removeOpportunity, applyOpportunity } from "../redux/VolunteerSlice";
-import { OPPORTUNITIES } from "../data/Constants";
+import { OPPORTUNITIES, SOFT_SKILL_QUESTIONS, PERSONALITY_QUESTIONS } from "../data/Constants";
 
 const Profile = () => {
   const navigate = useNavigate(); 
@@ -221,7 +221,96 @@ const Profile = () => {
           </div>
         </div>
 
-        {/* 5. Applied Opportunities Section (New) */}
+        {/* 5. Assessment Summary (New) */}
+        <div className="col-12 mt-4">
+          <div className="lav-card p-4">
+            <h5 className="section-heading mb-4">
+              <i className="bi bi-bar-chart-line me-2 text-primary" /> Assessment Summary
+            </h5>
+            
+            <div className="row g-4">
+              {/* Soft Skills Progress */}
+              <div className="col-md-6">
+                <div className="p-3 rounded-4 border bg-white shadow-sm h-100">
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                    <h6 className="fw-bold mb-0">Soft Skills Assessment</h6>
+                    <span className="badge bg-lavender text-lavender-dark rounded-pill px-3">
+                      {Object.keys(volunteer.softSkills || {}).length} / {SOFT_SKILL_QUESTIONS.length}
+                    </span>
+                  </div>
+                  <div className="progress mb-3" style={{ height: "10px", borderRadius: "10px" }}>
+                    <div 
+                      className="progress-bar" 
+                      role="progressbar" 
+                      style={{ 
+                        width: `${(Object.keys(volunteer.softSkills || {}).length / SOFT_SKILL_QUESTIONS.length) * 100}%`,
+                        backgroundColor: "var(--color-lavender)"
+                      }} 
+                    ></div>
+                  </div>
+                  {Object.keys(volunteer.softSkills || {}).length < SOFT_SKILL_QUESTIONS.length ? (
+                    <p className="text-muted small mb-0">
+                      <i className="bi bi-exclamation-circle me-1 text-warning" />
+                      Missing {SOFT_SKILL_QUESTIONS.length - Object.keys(volunteer.softSkills || {}).length} answers.
+                    </p>
+                  ) : (
+                    <p className="text-success small mb-0">
+                      <i className="bi bi-check-circle-fill me-1" />
+                      All soft skills questions answered!
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Personality Progress */}
+              <div className="col-md-6">
+                <div className="p-3 rounded-4 border bg-white shadow-sm h-100">
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                    <h6 className="fw-bold mb-0">Personality Assessment</h6>
+                    <span className="badge bg-lavender text-lavender-dark rounded-pill px-3">
+                      {Object.keys(volunteer.personality || {}).length} / {PERSONALITY_QUESTIONS.length}
+                    </span>
+                  </div>
+                  <div className="progress mb-3" style={{ height: "10px", borderRadius: "10px" }}>
+                    <div 
+                      className="progress-bar" 
+                      role="progressbar" 
+                      style={{ 
+                        width: `${(Object.keys(volunteer.personality || {}).length / PERSONALITY_QUESTIONS.length) * 100}%`,
+                        backgroundColor: "var(--color-lavender-dark)"
+                      }} 
+                    ></div>
+                  </div>
+                  {Object.keys(volunteer.personality || {}).length < PERSONALITY_QUESTIONS.length ? (
+                    <p className="text-muted small mb-0">
+                      <i className="bi bi-exclamation-circle me-1 text-warning" />
+                      Missing {PERSONALITY_QUESTIONS.length - Object.keys(volunteer.personality || {}).length} answers.
+                    </p>
+                  ) : (
+                    <p className="text-success small mb-0">
+                      <i className="bi bi-check-circle-fill me-1" />
+                      All personality questions answered!
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+            
+            {(Object.keys(volunteer.softSkills || {}).length < SOFT_SKILL_QUESTIONS.length || 
+              Object.keys(volunteer.personality || {}).length < PERSONALITY_QUESTIONS.length) && (
+              <div className="mt-4 text-center">
+                <button 
+                  className="btn btn-lav rounded-pill px-4"
+                  onClick={() => navigate("/volunteer/preference", { state: { editMode: true } })}
+                >
+                  Complete Your Assessment
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 6. Applied Opportunities Section (New) */}
         <div className="col-12 mt-4">
           <div className="lav-card p-4">
             <div className="d-flex justify-content-between align-items-center mb-4">

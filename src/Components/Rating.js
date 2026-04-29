@@ -9,7 +9,18 @@ const Rating = ({ value, onChange }) => {
     <div className="d-flex align-items-center justify-content-center gap-3 my-3 px-3">
       
       {/* 1. كلمة Agree على الشمال باللون الأخضر */}
-      <span style={{ color: colorGreen, fontWeight: 600, fontSize: "14px", flexShrink: 0 }}>
+      <span 
+        onClick={() => onChange(1)}
+        style={{ 
+          color: colorGreen, 
+          fontWeight: 600, 
+          fontSize: "14px", 
+          flexShrink: 0,
+          cursor: 'pointer',
+          transition: 'opacity 0.2s'
+        }}
+        className="hover-opacity"
+      >
         Agree
       </span>
 
@@ -53,7 +64,18 @@ const Rating = ({ value, onChange }) => {
       </div>
 
       {/* 4. كلمة Disagree على اليمين باللون اللافندر */}
-      <span style={{ color: colorLavender, fontWeight: 600, fontSize: "14px", flexShrink: 0 }}>
+      <span 
+        onClick={() => onChange(5)}
+        style={{ 
+          color: colorLavender, 
+          fontWeight: 600, 
+          fontSize: "14px", 
+          flexShrink: 0,
+          cursor: 'pointer',
+          transition: 'opacity 0.2s'
+        }}
+        className="hover-opacity"
+      >
         Disagree
       </span>
     </div>

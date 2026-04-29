@@ -2,6 +2,9 @@ import { useState } from 'react'
 import { Link, NavLink, useLocation } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux';
 import { updateUser, setSelectedRole } from '../redux/UserSlice'
+import { resetVolunteer } from '../redux/VolunteerSlice'
+import { resetOrganization } from '../redux/OrgSlice'
+import { clearApplications } from '../redux/ApplicationsSlice'
 import Logo from './Logo/Logo.js'
 import './Navbar.css'
 
@@ -11,6 +14,9 @@ export default function Navbar() {
   const [userOpen, setUserOpen] = useState(false)
 
   const dispatch = useDispatch()
+  const volunteer = useSelector((state) => state.volunteer);
+  const organization = useSelector((state) => state.organization);
+  const applications = useSelector((state) => state.applications.applications);
   const user = useSelector((state) => state.user.user);
   const selectedRole = useSelector((state) => state.user.selectedRole);
   const location = useLocation()
@@ -30,8 +36,13 @@ export default function Navbar() {
   const handleLogout = () => {
     dispatch(updateUser(null))
     dispatch(setSelectedRole(null))
+    dispatch(resetVolunteer())
+    dispatch(resetOrganization())
+    dispatch(clearApplications())
     closeNavbar()
   }
+
+  const profilePic = isOrg ? organization.profilePic : volunteer.profilePic;
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-white shadow-sm fixed-top py-2">
@@ -94,6 +105,9 @@ export default function Navbar() {
                   <NavLink className="nav-link px-3" to="/opportunities" onClick={closeNavbar}>Opportunities</NavLink>
                 </li>
                 <li className="nav-item mx-1">
+                  <NavLink className="nav-link px-3" to="/community" onClick={closeNavbar}>Community</NavLink>
+                </li>
+                <li className="nav-item mx-1">
                   <NavLink className="nav-link px-3" to="/rewards" onClick={closeNavbar}>Rewards</NavLink>
                 </li>
               </>
@@ -102,6 +116,21 @@ export default function Navbar() {
 
           {/* Right Side: Auth / Account */}
           <div className="navbar-nav ms-auto align-items-center">
+            {user && (
+              <li className="nav-item mx-1 position-relative">
+                <Link className="nav-link px-3" to="/messages" onClick={closeNavbar}>
+                  <i className="bi bi-chat-dots fs-5 icon-pulse"></i>
+                  {(isOrg 
+                    ? applications.filter(a => a.orgId === (organization.orgName || "org-1") && !a.read).length 
+                    : applications.filter(a => a.volunteerId === (volunteer.userName || "v-1") && !a.read).length
+                  ) > 0 && (
+                    <span className="position-absolute top-2 start-75 translate-middle p-1 bg-danger border border-light rounded-circle">
+                      <span className="visually-hidden">New alerts</span>
+                    </span>
+                  )}
+                </Link>
+              </li>
+            )}
             {user ? (
               <li
                 className="nav-item dropdown w-100"
@@ -110,18 +139,17 @@ export default function Navbar() {
               >
                 <a
                   className={`nav-link d-flex align-items-center justify-content-center gap-2 px-3 ${userOpen ? 'show' : ''}`}
-                  href="#"
+                  href="/#"
                   role="button"
                   onClick={(e) => { e.preventDefault(); setUserOpen(!userOpen); }}
                 >
-                  <div className="nav-avatar-sm">
-                    {(user.name || 'U').charAt(0).toUpperCase()}
+                  <div className="nav-avatar-sm" style={profilePic ? { backgroundImage: `url(${profilePic})`, backgroundSize: 'cover', backgroundPosition: 'center', color: 'transparent' } : {}}>
+                    {profilePic ? '' : (user.name || (isOrg ? organization.orgName : 'U') || 'U').charAt(0).toUpperCase()}
                   </div>
                 </a>
                 <ul className={`dropdown-menu dropdown-menu-end border-0 shadow-lg mt-0 ${userOpen ? 'show' : ''}`}>
-                  <li className="dropdown-header border-0 bg-transparent text-muted small">Hello, {user.name || 'User'}</li>
-                  <li><Link className="dropdown-item py-2" to="/profile" onClick={closeNavbar}>Profile</Link></li>
-                  <li><Link className="dropdown-item py-2" to="/settings" onClick={closeNavbar}>Settings</Link></li>
+                  <li className="dropdown-header border-0 bg-transparent text-muted small">Hello, {user.name || (isOrg ? organization.orgName : 'User')}</li>
+                  <li><Link className="dropdown-item py-2" to={isOrg ? "/org/profile" : "/profile"} onClick={closeNavbar}>Profile</Link></li>
                   <li><hr className="dropdown-divider" /></li>
                   <li><button className="dropdown-item py-2 text-danger" onClick={handleLogout}>Logout</button></li>
                 </ul>

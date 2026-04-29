@@ -451,7 +451,6 @@ section {
 /* ستايل الـ Hover */
 .question-card:hover, .question-box:hover {
   border-color: var(--lav-200) !important;
-  transform: translateY(-2px);
 }
 
 /* وأهم حتة: ستايل الإجابة */
@@ -587,3 +586,104 @@ section {
     color: var(--color-lavender) !important;
     border-radius: 50px !important;
 }
+
+/* ===== GLOBAL ICON ANIMATIONS ===== */
+
+/* 1. Base Transition for all icon-like elements */
+svg, 
+[class*="icon"], 
+[class*="badge"], 
+[class*="medal"], 
+i, 
+.hero-deco,
+.avatar-circle,
+.how-num,
+.tier-medal {
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                filter 0.3s ease, 
+                box-shadow 0.3s ease !important;
+}
+
+/* 2. Entrance Animation */
+@keyframes iconEntrance {
+    from { 
+        opacity: 0; 
+        transform: scale(0.6) translateY(10px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: scale(1) translateY(0); 
+    }
+}
+
+/* Apply entrance to icons that aren't backgrounds */
+svg:not(.hero-map), 
+[class*="icon"]:not(.hero-map),
+.about-icon svg,
+.how-num,
+.tier-medal svg {
+    animation: iconEntrance 0.7s cubic-bezier(0.2, 1.0, 0.3, 1.0) both;
+}
+
+/* 3. Continuous Floating (Subtle movement for decorative items) */
+@keyframes iconFloat {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+}
+
+.about-icon, 
+.tier-medal, 
+.hero-deco, 
+.badge-icon,
+.avatar-circle {
+    animation: iconFloat 4s ease-in-out infinite !important;
+}
+
+/* 4. Pulse for high-impact numbers/scores */
+@keyframes iconPulse {
+    0%, 100% { transform: scale(1); filter: brightness(1); }
+    50% { transform: scale(1.05); filter: brightness(1.1); }
+}
+
+.op-match, 
+.impact-stat strong,
+.how-num {
+    animation: iconPulse 3s ease-in-out infinite !important;
+}
+
+/* 5. Slow Rotation for star-like icons */
+@keyframes iconRotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.bi-star, 
+.tier-medal svg,
+svg[fill="#e6b84d"] {
+    animation: iconRotate 15s linear infinite !important;
+}
+
+/* 6. Hover Interactions */
+svg:hover, 
+[class*="icon"]:hover, 
+i:hover, 
+.avatar-circle:hover,
+.badge-pill:hover i {
+    transform: scale(1.1) !important;
+    filter: drop-shadow(0 0 10px rgba(139, 122, 214, 0.5)) !important;
+    cursor: pointer;
+}
+
+/* Button Icon Interaction */
+.btn:hover svg, 
+.btn:hover [class*="icon"] {
+    transform: translateX(4px) scale(1.1) !important;
+}
+
+/* Card Hover Icon Reaction */
+.card:hover .about-icon,
+.opp-card:hover svg,
+.how-step:hover .how-num,
+.about-card:hover .about-icon {
+    transform: scale(1.15) translateY(-5px) !important;
+}

@@ -57,7 +57,12 @@ const PreferenceForm = () => {
 
   const handleNext = () => {
     setTouched(true);
-    if (!canNext) return;
+    // Relaxed validation for demo, only Step 1 is strictly required
+    if (step === 1 && !step1Valid) {
+      alert("Please fill in your basic info and select at least one skill.");
+      return;
+    }
+    
     setTouched(false);
     if (step < 3) setStep(step + 1);
     else handleSubmit();

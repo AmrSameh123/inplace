@@ -1,4 +1,6 @@
 import { Link } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { OPPORTUNITIES } from '../data/Constants'
 import './Home.css'
 
 import hero1 from '../assets/p2.jpg'
@@ -10,6 +12,15 @@ import story3 from '../assets/story-3.jpg'
 
 
 export default function Home() {
+  const volunteer = useSelector((state) => state.volunteer);
+  const organization = useSelector((state) => state.organization);
+
+  // Dynamic statistics based on local data + base
+  const totalHours = (volunteer?.hours || 0) + 120; // 120 base hours
+  const totalOpportunities = OPPORTUNITIES.length + (organization?.submitted ? 1 : 0); // Active opps
+  const totalOrgs = 3 + (organization?.submitted ? 1 : 0); // Base orgs
+  const totalVolunteers = 14 + (volunteer?.submitted ? 1 : 0); 
+
   return (
     <main>
       {/* ===== HERO (structure mirrors the reference 1:1) ===== */}
@@ -184,20 +195,20 @@ export default function Home() {
           </div>
           <div className="impact-grid">
             <div className="impact-stat">
-              <strong>58,240</strong>
+              <strong>{totalHours}</strong>
               <span>Hours donated</span>
             </div>
             <div className="impact-stat">
-              <strong>2,410</strong>
-              <span>Projects shipped</span>
+              <strong>{totalOpportunities}</strong>
+              <span>Opportunities</span>
             </div>
             <div className="impact-stat">
-              <strong>840</strong>
+              <strong>{totalOrgs}</strong>
               <span>Partner orgs</span>
             </div>
             <div className="impact-stat">
-              <strong>96%</strong>
-              <span>Volunteer satisfaction</span>
+              <strong>{totalVolunteers}</strong>
+              <span>Volunteers</span>
             </div>
           </div>
         </div>

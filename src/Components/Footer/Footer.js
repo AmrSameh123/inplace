@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import Logo from '../Logo/Logo.js'
 import './Footer.css'
 
@@ -17,22 +18,22 @@ export default function Footer() {
           <h4>Platform</h4>
           <a href="/#how-it-works">How It Works</a>
           <a href="/#impact">Impact</a>
-          <a href="/opportunities">Opportunities</a>
-          <a href="/rewards">Rewards</a>
+          <Link to="/opportunities">Opportunities</Link>
+          <Link to="/rewards">Rewards</Link>
         </div>
         <div>
           <h4>Community</h4>
           <a href="/#stories">Success Stories</a>
           <a href="/#guide">Volunteer Guide</a>
-          <a href="/register">Join as Volunteer</a>
-          <a href="/register">List your Org</a>
+          <Link to="/register">Join as Volunteer</Link>
+          <Link to="/register">List your Org</Link>
         </div>
         <div>
           <h4>Company</h4>
-          <a href="/#about">About</a>
-          <a href="#">Privacy</a>
-          <a href="#">Terms</a>
-          <a href="#">Contact</a>
+          <Link to="/about">About</Link>
+          <Link to="/privacy">Privacy</Link>
+          <Link to="/terms">Terms</Link>
+          <Link to="/contact">Contact</Link>
         </div>
       </div>
       <div className="container footer-bottom">

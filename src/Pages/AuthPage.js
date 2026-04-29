@@ -5,6 +5,8 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { motion, AnimatePresence } from 'framer-motion';
 import { updateUser, setSelectedRole as setReduxRole } from '../redux/UserSlice';
+import { updateVolunteer } from '../redux/VolunteerSlice';
+import { updateOrganization } from '../redux/OrgSlice';
 import Logo from '../Components/Logo/Logo';
 
 // React Bits
@@ -57,7 +59,23 @@ export default function AuthPage() {
     onSubmit: (values) => {
       setIsLoading(true);
       setTimeout(() => {
-        dispatch(updateUser({ name: "Amr Sameh", role: "volunteer", email: values.email }));
+        const namePrefix = values.email.split('@')[0];
+        // Demo logic: emails containing 'org' are organizations, others are volunteers
+        const detectedRole = values.email.toLowerCase().includes('org') ? 'organization' : 'volunteer';
+        const formattedName = namePrefix.charAt(0).toUpperCase() + namePrefix.slice(1);
+        
+        dispatch(updateUser({ 
+          name: formattedName, 
+          role: detectedRole, 
+          email: values.email 
+        }));
+
+        if (detectedRole === 'volunteer') {
+          dispatch(updateVolunteer({ userName: formattedName }));
+        } else {
+          dispatch(updateOrganization({ orgName: formattedName }));
+        }
+
         setIsLoading(false);
         navigate('/');
       }, 1500);
@@ -79,8 +97,8 @@ export default function AuthPage() {
       setIsLoading(true);
       setTimeout(() => {
         dispatch(updateUser({ name: values.name, role: 'volunteer', email: values.email }));
+        dispatch(updateVolunteer({ userName: values.name, track: values.specialty }));
         setIsLoading(false);
-        // navigate('/');
         navigate('/volunteer/preference');
       }, 1500);
     },
@@ -101,8 +119,9 @@ export default function AuthPage() {
       setIsLoading(true);
       setTimeout(() => {
         dispatch(updateUser({ name: values.orgName, role: 'organization', email: values.email }));
+        dispatch(updateOrganization({ orgName: values.orgName, industry: values.industry }));
         setIsLoading(false);
-        navigate('/');
+        navigate('/org/preference');
       }, 1500);
     },
   });
@@ -111,35 +130,19 @@ export default function AuthPage() {
 
   return (
     <div className="login-page-v2">
-      {/* Background stays simple */}
       <div className="login-bg-simple" />
-
       <div className="login-wrapper-v2">
         <FadeContent duration={1.2} threshold={0.1} blur={true}>
           <motion.div 
             className="login-container-split shadow-lg overflow-hidden"
-            animate={{ 
-              flexDirection: isFlipped ? 'row-reverse' : 'row',
-            }}
-            transition={{ 
-              duration: 0.6, 
-              ease: "easeInOut"
-            }}
+            animate={{ flexDirection: isFlipped ? 'row-reverse' : 'row' }}
+            transition={{ duration: 0.6, ease: "easeInOut" }}
             layout
           >
-            
-            {/* Action Side (Forms or Role Selection) */}
             <motion.div layout className="login-form-side">
               <AnimatePresence mode="wait">
                 {mode === 'login' && (
-                  <motion.div 
-                    key="login"
-                    className="login-inner"
-                    initial={{ opacity: 0, x: -50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: 50 }}
-                    transition={{ duration: 0.5 }}
-                  >
+                  <motion.div key="login" className="login-inner" initial={{ opacity: 0, x: -50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 50 }}>
                     <div className="login-header-v2">
                       <Logo size={55} className="mb-4" />
                       <h1 className="decrypt-title fw-black">WELCOME BACK</h1>
@@ -167,14 +170,7 @@ export default function AuthPage() {
                 )}
 
                 {mode === 'role-select' && (
-                  <motion.div 
-                    key="role-select"
-                    className="role-grid-v2"
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 1.1 }}
-                    transition={{ duration: 0.5 }}
-                  >
+                  <motion.div key="role-select" className="role-grid-v2" initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.1 }}>
                     <button className="role-option-full volunteer" onClick={() => handleRoleSelect('volunteer')}>
                       <div className="role-content-full">
                         <span className="role-icon-lg">👤</span>
@@ -194,14 +190,7 @@ export default function AuthPage() {
                 )}
 
                 {mode === 'register' && role === 'volunteer' && (
-                  <motion.div 
-                    key="register-volunteer"
-                    className="login-inner"
-                    initial={{ opacity: 0, x: 50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -50 }}
-                    transition={{ duration: 0.5 }}
-                  >
+                  <motion.div key="register-volunteer" className="login-inner" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}>
                     <div className="login-header-v2">
                       <Logo size={55} className="mb-3" />
                       <h1 className="decrypt-title fw-black">VOLUNTEER SIGNUP</h1>
@@ -222,9 +211,9 @@ export default function AuthPage() {
                         <label>Specialty</label>
                         <select {...volunteerFormik.getFieldProps('specialty')} className="form-select-v2">
                           <option value="">Select your track</option>
-                          <option value="frontend">Frontend Developer</option>
-                          <option value="backend">Backend Developer</option>
-                          <option value="fullstack">Database</option>
+                          <option value="Frontend">Frontend Developer</option>
+                          <option value="Backend">Backend Developer</option>
+                          <option value="Database">Database</option>
                         </select>
                         {volunteerFormik.touched.specialty && volunteerFormik.errors.specialty && <div className="error-msg">{volunteerFormik.errors.specialty}</div>}
                       </div>
@@ -242,21 +231,11 @@ export default function AuthPage() {
                         {isLoading ? <div className="loader-v2" /> : <ShinyText text="JOIN COMMUNITY" />}
                       </button>
                     </form>
-                    <div className="login-footer-v2">
-                      <button onClick={() => setMode('role-select')} className="btn-link">Change Role</button>
-                    </div>
                   </motion.div>
                 )}
 
                 {mode === 'register' && role === 'organization' && (
-                  <motion.div 
-                    key="register-org"
-                    className="login-inner"
-                    initial={{ opacity: 0, x: 50 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -50 }}
-                    transition={{ duration: 0.5 }}
-                  >
+                  <motion.div key="register-org" className="login-inner" initial={{ opacity: 0, x: 50 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -50 }}>
                     <div className="login-header-v2">
                       <Logo size={55} className="mb-3" />
                       <h1 className="decrypt-title fw-black">ORG REGISTRATION</h1>
@@ -277,10 +256,9 @@ export default function AuthPage() {
                         <label>Business Field</label>
                         <select {...orgFormik.getFieldProps('industry')} className="form-select-v2">
                           <option value="">Select project field</option>
-                          <option value="frontend">Frontend Development</option>
-                          <option value="backend">Backend Development</option>
-                          <option value="fullstack">Database</option>
-                          
+                          <option value="Frontend">Frontend Development</option>
+                          <option value="Backend">Backend Development</option>
+                          <option value="Database">Database</option>
                         </select>
                         {orgFormik.touched.industry && orgFormik.errors.industry && <div className="error-msg">{orgFormik.errors.industry}</div>}
                       </div>
@@ -298,50 +276,25 @@ export default function AuthPage() {
                         {isLoading ? <div className="loader-v2" /> : <ShinyText text="REGISTER ORG" />}
                       </button>
                     </form>
-                    <div className="login-footer-v2">
-                      <button onClick={() => setMode('role-select')} className="btn-link">Change Role</button>
-                    </div>
                   </motion.div>
                 )}
               </AnimatePresence>
             </motion.div>
 
-            {/* Decoration Side */}
             <motion.div layout className={`login-decoration-side d-none d-lg-flex ${role ? role : ''}`}>
               <div className="decoration-content-v2 text-white p-5 text-center">
                 <AnimatePresence mode="wait">
-                  <motion.div
-                    key={role || 'default'}
-                    initial={{ opacity: 0, scale: 0.9 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0, scale: 1.1 }}
-                    transition={{ duration: 0.4 }}
-                  >
-                    <h2 className="display-5 fw-bold mb-3">
-                      {role === 'volunteer' ? 'Start Your Journey' : role === 'organization' ? 'Find Your Talent' : 'Make an Impact'}
-                    </h2>
-                    <p className="lead opacity-80 mb-5">
-                      {role === 'volunteer' 
-                        ? 'Connect with organizations that need your skills.' 
-                        : role === 'organization' 
-                          ? 'Find dedicated volunteers for your cause.' 
-                          : 'Join our growing community.'}
-                    </p>
+                  <motion.div key={role || 'default'} initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 1.1 }}>
+                    <h2 className="display-5 fw-bold mb-3">{role === 'volunteer' ? 'Start Your Journey' : role === 'organization' ? 'Find Your Talent' : 'Make an Impact'}</h2>
+                    <p className="lead opacity-80 mb-5">{role === 'volunteer' ? 'Connect with organizations that need your skills.' : role === 'organization' ? 'Find dedicated volunteers for your cause.' : 'Join our growing community.'}</p>
                     <div className="stats-grid-v3">
-                      <div className="stat-card">
-                        <CountUp to={12450} from={0} duration={2} className="h3 d-block fw-bold" />
-                        <span className="small opacity-70 uppercase tracking-wider">Volunteers</span>
-                      </div>
-                      <div className="stat-card">
-                        <CountUp to={850} from={0} duration={2.5} className="h3 d-block fw-bold" />
-                        <span className="small opacity-70 uppercase tracking-wider">Organizations</span>
-                      </div>
+                      <div className="stat-card"><CountUp to={12450} from={0} duration={2} className="h3 d-block fw-bold" /><span className="small opacity-70 uppercase tracking-wider">Volunteers</span></div>
+                      <div className="stat-card"><CountUp to={850} from={0} duration={2.5} className="h3 d-block fw-bold" /><span className="small opacity-70 uppercase tracking-wider">Organizations</span></div>
                     </div>
                   </motion.div>
                 </AnimatePresence>
               </div>
             </motion.div>
-
           </motion.div>
         </FadeContent>
       </div>

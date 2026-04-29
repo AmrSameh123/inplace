@@ -27,22 +27,14 @@ const Recommended = () => {
     return list;
   }, [filter, volunteer.skills]);
 
-  const handleApply = (opp) => {
-    alert(`Application sent for: ${opp.title}`);
-  };
-
   return (
-    /* التعديل هنا: نأكد على الـ max-width عشان ميفردش لآخر الشاشة */
     <div className="container" style={{ marginTop: "110px", maxWidth: "1200px" }}>
       <div className="row g-4 justify-content-center"> 
-        {/* MAIN CONTENT */}
         <div className="col-lg-8">
           <div className="d-flex justify-content-between align-items-center flex-wrap mb-4">
             <div>
               <h3 className="section-heading mb-0" style={{ fontWeight: "700" }}>Recommended Opportunities</h3>
-              <p className="section-subtitle mb-0 text-muted">
-                Curated based on your preferences.
-              </p>
+              <p className="section-subtitle mb-0 text-muted">Curated based on your preferences.</p>
             </div>
             <div className="mt-3 mt-md-0">
               <select
@@ -70,14 +62,13 @@ const Recommended = () => {
             <div className="row g-4">
               {filtered.map((opp) => (
                 <div className="col-md-6" key={opp.id}>
-                  <OpportunityCard opp={opp} onApply={handleApply} />
+                  <OpportunityCard opp={opp} />
                 </div>
               ))}
             </div>
           )}
         </div>
 
-        {/* SIDEBAR - الكارد اللي في الجنب */}
         <div className="col-lg-4">
           <ProfileSidebar volunteer={volunteer} />
         </div>

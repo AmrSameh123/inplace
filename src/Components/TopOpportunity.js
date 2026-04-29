@@ -1,6 +1,37 @@
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { applyOpportunity, removeOpportunity } from '../redux/VolunteerSlice'
+import { addApplication } from '../redux/ApplicationsSlice'
 import './TopOpportunity.css'
 
 export default function OpportunityCard({ op, showMatch = false, actions = null }) {
+  const dispatch = useDispatch();
+  const volunteer = useSelector((state) => state.volunteer);
+  const isApplied = volunteer.appliedOpportunities?.some(a => a.id === op.id);
+
+  const user = useSelector((state) => state.user.user);
+  const navigate = useNavigate();
+
+  const handleApply = () => {
+    if (!user) {
+      navigate("/register");
+      return;
+    }
+
+    if (isApplied) {
+      dispatch(removeOpportunity(op.id));
+    } else {
+      dispatch(applyOpportunity(op));
+      dispatch(addApplication({
+        volunteerId: user.name || "v-1",
+        volunteerName: user.name || "Volunteer",
+        opportunityId: op.id,
+        opportunityTitle: op.title,
+        orgId: op.org,
+        status: 'pending'
+      }));
+    }
+  };
   return (
     <article className="op-card">
       <div className="op-card-head">
@@ -48,8 +79,12 @@ export default function OpportunityCard({ op, showMatch = false, actions = null 
           ))}
         </div>
         {actions ? actions : (
-          <button className="btn btn-primary" style={{padding:'9px 18px', fontSize:13}}>
-            Apply
+          <button 
+            className={`btn ${isApplied ? 'btn-outline-danger' : 'btn-primary'}`} 
+            style={{padding:'9px 18px', fontSize:13}}
+            onClick={handleApply}
+          >
+            {isApplied ? 'Unapply' : 'Apply'}
           </button>
         )}
       </div>

@@ -10,7 +10,8 @@ const initialState = {
   personality: {},
   submitted: false,
   hours: 42, // قيمة افتراضية زي ما كانت عندك
-  profilePic: null, // الإضافة الجديدة لتخزين الصورة كـ Base64
+  profilePic: null, 
+  appliedOpportunities: [], 
 };
 
 const volunteerSlice = createSlice({
@@ -24,8 +25,17 @@ const volunteerSlice = createSlice({
     },
     // لو حابة ترجعي الداتا فاضية وقت اللوج أوت مثلاً
     resetVolunteer: () => initialState,
+    applyOpportunity: (state, action) => {
+      const exists = state.appliedOpportunities.find(op => op.id === action.payload.id);
+      if (!exists) {
+        state.appliedOpportunities.push(action.payload);
+      }
+    },
+    removeOpportunity: (state, action) => {
+      state.appliedOpportunities = state.appliedOpportunities.filter(op => op.id !== action.payload);
+    },
   },
 });
 
-export const { updateVolunteer, resetVolunteer } = volunteerSlice.actions;
+export const { updateVolunteer, resetVolunteer, applyOpportunity, removeOpportunity } = volunteerSlice.actions;
 export default volunteerSlice.reducer;

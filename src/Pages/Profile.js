@@ -1,21 +1,37 @@
 import React from "react";
-import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom"; 
+import { useSelector, useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { computeBadges } from "../utils/badges";
+import { updateVolunteer, removeOpportunity, applyOpportunity } from "../redux/VolunteerSlice";
+import { OPPORTUNITIES, SOFT_SKILL_QUESTIONS, PERSONALITY_QUESTIONS } from "../data/Constants";
 
 const Profile = () => {
   const navigate = useNavigate(); 
   const volunteer = useSelector((state) => state.volunteer);
+  const user = useSelector((state) => state.user.user);
+  const dispatch = useDispatch();
+  const fileInputRef = React.useRef(null);
 
-  const badges = computeBadges(volunteer.hours || 0);
+
   
   // استخراج أول حرف من الاسم عشان نستخدمه كـ Avatar
-  const initials = (volunteer.userName || "V")
+  const initials = (volunteer.userName || user?.name || "U")
     .split(" ")
     .map((p) => p[0])
     .slice(0, 2)
     .join("")
     .toUpperCase();
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        dispatch(updateVolunteer({ profilePic: reader.result }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   return (
     <div className="container py-4 py-md-5" style={{ maxWidth: 1000, marginTop: "100px" }}>
@@ -25,20 +41,32 @@ const Profile = () => {
         <div className="col-12">
           <div className="lav-card d-flex align-items-center p-4 shadow-sm" style={{ borderRadius: "20px" }}>
             
-            {/* دائرة الصورة (Avatar) - تم التعديل هنا لتدعم عرض الصورة الحقيقية */}
-            <div className="me-4 shadow-sm" style={{ flexShrink: 0 }}>
+            {/* دائرة الصورة (Avatar) - تم التعديل هنا لتدعم عرض الصورة الحقيقية ورفع صورة جديدة */}
+            <div className="me-4 shadow-sm position-relative" style={{ flexShrink: 0, cursor: "pointer" }} onClick={() => fileInputRef.current?.click()} title="Click to change profile picture">
+              <input 
+                type="file" 
+                ref={fileInputRef} 
+                onChange={handleImageUpload} 
+                style={{ display: 'none' }} 
+                accept="image/*"
+              />
               {volunteer.profilePic ? (
-                <img 
-                  src={volunteer.profilePic} 
-                  alt="Profile" 
-                  style={{ 
-                    width: "100px", 
-                    height: "100px", 
-                    objectFit: "cover", 
-                    borderRadius: "50%",
-                    border: "3px solid var(--color-lavender)"
-                  }} 
-                />
+                <div style={{ position: "relative", width: "100px", height: "100px" }}>
+                  <img 
+                    src={volunteer.profilePic} 
+                    alt="Profile" 
+                    style={{ 
+                      width: "100%", 
+                      height: "100%", 
+                      objectFit: "cover", 
+                      borderRadius: "50%",
+                      border: "3px solid var(--color-lavender)"
+                    }} 
+                  />
+                  <div className="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style={{ width: "28px", height: "28px", border: "2px solid white" }}>
+                    <i className="bi bi-camera-fill" style={{ fontSize: "12px", color: "white" }}></i>
+                  </div>
+                </div>
               ) : (
                 <div className="avatar-circle" 
                      style={{ 
@@ -54,6 +82,9 @@ const Profile = () => {
                         fontWeight: "bold"
                      }}>
                   {initials}
+                  <div className="position-absolute bottom-0 end-0 bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style={{ width: "28px", height: "28px", border: "2px solid white" }}>
+                    <i className="bi bi-camera-fill" style={{ fontSize: "12px", color: "white" }}></i>
+                  </div>
                 </div>
               )}
             </div>
@@ -61,7 +92,7 @@ const Profile = () => {
             {/* بيانات المستخدم الأساسية */}
             <div>
               <h1 className="fw-bold mb-1" style={{ color: "var(--color-text)", fontSize: "2.2rem" }}>
-                {volunteer.userName || "Kenzy"}
+                {volunteer.userName || user?.name || "User"}
               </h1>
               <p className="text-muted mb-0" style={{ fontSize: "1.1rem" }}>
                 <i className="bi bi-gender-ambiguous me-2" />
@@ -83,7 +114,7 @@ const Profile = () => {
               <button 
                 className="btn-lav-outline w-100 py-2"
                 style={{ borderRadius: "12px", fontSize: "0.95rem" }}
-                onClick={() => navigate("/Volunteer/preference", { state: { editMode: true } })}
+                onClick={() => navigate("/volunteer/preference", { state: { editMode: true } })}
               >
                 <i className="bi bi-pencil-square me-2" />
                 Update Preferences
@@ -187,6 +218,145 @@ const Profile = () => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* 5. Assessment Summary (New) */}
+        <div className="col-12 mt-4">
+          <div className="lav-card p-4">
+            <h5 className="section-heading mb-4">
+              <i className="bi bi-bar-chart-line me-2 text-primary" /> Assessment Summary
+            </h5>
+            
+            <div className="row g-4">
+              {/* Soft Skills Progress */}
+              <div className="col-md-6">
+                <div className="p-3 rounded-4 border bg-white shadow-sm h-100">
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                    <h6 className="fw-bold mb-0">Soft Skills Assessment</h6>
+                    <span className="badge bg-lavender text-lavender-dark rounded-pill px-3">
+                      {Object.keys(volunteer.softSkills || {}).length} / {SOFT_SKILL_QUESTIONS.length}
+                    </span>
+                  </div>
+                  <div className="progress mb-3" style={{ height: "10px", borderRadius: "10px" }}>
+                    <div 
+                      className="progress-bar" 
+                      role="progressbar" 
+                      style={{ 
+                        width: `${(Object.keys(volunteer.softSkills || {}).length / SOFT_SKILL_QUESTIONS.length) * 100}%`,
+                        backgroundColor: "var(--color-lavender)"
+                      }} 
+                    ></div>
+                  </div>
+                  {Object.keys(volunteer.softSkills || {}).length < SOFT_SKILL_QUESTIONS.length ? (
+                    <p className="text-muted small mb-0">
+                      <i className="bi bi-exclamation-circle me-1 text-warning" />
+                      Missing {SOFT_SKILL_QUESTIONS.length - Object.keys(volunteer.softSkills || {}).length} answers.
+                    </p>
+                  ) : (
+                    <p className="text-success small mb-0">
+                      <i className="bi bi-check-circle-fill me-1" />
+                      All soft skills questions answered!
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              {/* Personality Progress */}
+              <div className="col-md-6">
+                <div className="p-3 rounded-4 border bg-white shadow-sm h-100">
+                  <div className="d-flex justify-content-between align-items-center mb-2">
+                    <h6 className="fw-bold mb-0">Personality Assessment</h6>
+                    <span className="badge bg-lavender text-lavender-dark rounded-pill px-3">
+                      {Object.keys(volunteer.personality || {}).length} / {PERSONALITY_QUESTIONS.length}
+                    </span>
+                  </div>
+                  <div className="progress mb-3" style={{ height: "10px", borderRadius: "10px" }}>
+                    <div 
+                      className="progress-bar" 
+                      role="progressbar" 
+                      style={{ 
+                        width: `${(Object.keys(volunteer.personality || {}).length / PERSONALITY_QUESTIONS.length) * 100}%`,
+                        backgroundColor: "var(--color-lavender-dark)"
+                      }} 
+                    ></div>
+                  </div>
+                  {Object.keys(volunteer.personality || {}).length < PERSONALITY_QUESTIONS.length ? (
+                    <p className="text-muted small mb-0">
+                      <i className="bi bi-exclamation-circle me-1 text-warning" />
+                      Missing {PERSONALITY_QUESTIONS.length - Object.keys(volunteer.personality || {}).length} answers.
+                    </p>
+                  ) : (
+                    <p className="text-success small mb-0">
+                      <i className="bi bi-check-circle-fill me-1" />
+                      All personality questions answered!
+                    </p>
+                  )}
+                </div>
+              </div>
+            </div>
+            
+            {(Object.keys(volunteer.softSkills || {}).length < SOFT_SKILL_QUESTIONS.length || 
+              Object.keys(volunteer.personality || {}).length < PERSONALITY_QUESTIONS.length) && (
+              <div className="mt-4 text-center">
+                <button 
+                  className="btn btn-lav rounded-pill px-4"
+                  onClick={() => navigate("/volunteer/preference", { state: { editMode: true } })}
+                >
+                  Complete Your Assessment
+                </button>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* 6. Applied Opportunities Section (New) */}
+        <div className="col-12 mt-4">
+          <div className="lav-card p-4">
+            <div className="d-flex justify-content-between align-items-center mb-4">
+              <h5 className="section-heading mb-0">
+                <i className="bi bi-file-earmark-check me-2 text-primary" /> Applied Opportunities
+              </h5>
+              <span className="badge bg-primary rounded-pill px-3">
+                {volunteer.appliedOpportunities?.length || 0} Total
+              </span>
+            </div>
+
+            {volunteer.appliedOpportunities && volunteer.appliedOpportunities.length > 0 ? (
+              <div className="row g-3">
+                {volunteer.appliedOpportunities.map((op) => (
+                  <div key={op.id} className="col-md-6">
+                    <div className="p-3 rounded-4 border shadow-sm h-100 d-flex justify-content-between align-items-center bg-white hover-up transition-all">
+                      <div>
+                        <h6 className="fw-bold mb-1 text-dark">{op.title}</h6>
+                        <p className="text-muted small mb-0">
+                          <i className="bi bi-building me-1"></i> {op.org} • {op.type}
+                        </p>
+                      </div>
+                      <button 
+                        className="btn btn-outline-danger btn-sm rounded-circle shadow-sm" 
+                        style={{ width: "32px", height: "32px", padding: 0 }}
+                        onClick={() => dispatch(removeOpportunity(op.id))}
+                        title="Remove Application"
+                      >
+                        <i className="bi bi-trash3-fill"></i>
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-5 rounded-4 bg-light">
+                <i className="bi bi-search fs-1 text-muted opacity-25 mb-3 d-block"></i>
+                <p className="text-muted mb-3">You haven&apos;t applied to any opportunities yet.</p>
+                <button 
+                  className="btn btn-primary rounded-pill px-4"
+                  onClick={() => navigate("/Opportunities")}
+                >
+                  Explore Opportunities
+                </button>
+              </div>
+            )}
           </div>
         </div>
 
